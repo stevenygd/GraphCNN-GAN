@@ -37,3 +37,12 @@ ICLR 2019 BibTex reference:
   A trained model for the method with aggregation upsampling is provided for the following Shapenet classes: airplane, chair, sofa, table.
   - launch_test.sh : generate a batch of point clouds from the specified class 
   - launch_train.sh : retrain the network (requires downloading the Shapenet dataset and place it in the data directory)
+
+# By Guandao
+1. Put PointFlow point clouds under path `data/ShapeNetCore.v2.PC15k`
+2. Install the conda environment:
+```bash
+conda env create -f environment.yml
+conda activate tfpy2.7
+```
+3. Then you can see `launch_train.sh` for examplary training script.
