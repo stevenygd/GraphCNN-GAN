@@ -1,0 +1,4 @@
+data
+*/*.pyc
+log_dir
+Results/gconv_up_aggr_v2

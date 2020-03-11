@@ -6,10 +6,12 @@ import shutil
 import sys
 
 from config import Config
-from in_out import snc_category_to_synth_id, create_dir, PointCloudDataSet, load_all_point_clouds_under_folder
+# from in_out import snc_category_to_synth_id, create_dir, PointCloudDataSet, load_all_point_clouds_under_folder
+from in_out import snc_category_to_synth_id, create_dir, PointCloudDataSet, load_all_point_clouds_under_folders
 from gan import GAN
 from general_utils import *
 from PIL import Image
+import tqdm
 
 import scipy.io as sio
 
@@ -35,8 +37,12 @@ class_name = param.class_name
 
 # import data
 syn_id = snc_category_to_synth_id()[class_name]
-class_dir = osp.join(config.top_in_dir , syn_id)
-all_pc_data = load_all_point_clouds_under_folder(class_dir, n_threads=8, file_ending='.ply', verbose=True)
+class_dir = osp.join(config.top_in_dir , syn_id, "train")
+
+# all_pc_data = load_all_point_clouds_under_folder(
+#     class_dir, n_threads=8, file_ending='.ply', verbose=True)
+all_pc_data = load_all_point_clouds_under_folders(
+    [class_dir], n_threads=8, file_ending='.npy', verbose=True)
 
 model = GAN(config)
 model.do_variables_init()
@@ -66,9 +72,8 @@ else:
 
 
 # training
-for iter_no in range(start_iter, config.N_iter):
-
-	for dis_iter in range(config.dis_n_iter):
+for iter_no in tqdm.tqdm(range(start_iter, config.N_iter), leave=False):
+	for dis_iter in tqdm.tqdm(range(config.dis_n_iter), leave=False):
 		noise = np.random.normal(size=[config.batch_size, config.z_size], scale=0.2)
 		data = all_pc_data.next_batch(config.batch_size)[0]
 		model.fit(data, noise, iter_no, dis_iter)
